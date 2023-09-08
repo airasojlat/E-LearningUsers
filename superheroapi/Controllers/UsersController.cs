@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using superheroapi.Models;
 using superheroapi.Services.UserServices;
 
@@ -24,24 +25,82 @@ namespace superheroapi.Controllers
             return await result;
         }
         [HttpPost("login")]
-        public async Task<ActionResult<User>> login([FromBody] LoginModel loginInfo)
+        public async Task<ActionResult<User>> Login([FromBody] LoginModel loginInfo)
         {
             if (loginInfo.EmailAddress is null)
             {
                 return BadRequest("EmailAddress is empty");
             }
-            var result = await _userService.login(loginInfo);
+            if (loginInfo.Password is null)
+            {
+                return BadRequest("Password is empty");
+            }
+            var result = await _userService.Login(loginInfo);
             if (result is null)
             {
                 return NotFound("User not found.");
             }
             return result;
         }
-        [HttpPost]
-        public async Task<ActionResult<List<User>>> AddUser(User user)
+        [HttpPost("signup")]
+        public async Task<ActionResult<List<User>>> Signup(User user)
         {
-            var result = await _userService.AddUser(user);
+            var error = SignupValidation(user);
+            if (error is not null)
+            {
+                return BadRequest(string.Join(", \n" , error));
+            }
+            var result = await _userService.Signup(user);
             return result;
+        }
+        private List<string> SignupValidation(User user)
+        {
+            
+            var validationList = new List<string>();
+            if (string.IsNullOrEmpty(user.EmailAddress))
+            {
+                validationList.Add("Email Address is not filled");   
+            }
+            if (string.IsNullOrEmpty(user.Password))
+            {
+                validationList.Add("Password is not filled");
+            }
+            if (string.IsNullOrEmpty(user.UserName))
+            {
+                validationList.Add("UserName is not filled");
+            }
+            if (string.IsNullOrEmpty(user.FirstName))
+            {
+                validationList.Add("FirstName is not filled");
+            }
+            if (string.IsNullOrEmpty(user.LastName))
+            {
+                validationList.Add("LastName is not filled");
+            }
+            if (string.IsNullOrEmpty(user.PhoneNumber))
+            {
+                validationList.Add("PhoneNumber is not filled");
+            }
+            if (string.IsNullOrEmpty(user.Country))
+            {
+                validationList.Add("Country is not filled");
+            }
+            if (user.BirthDay < DateTime.Now.AddYears(- 120) )
+            {
+                validationList.Add("You are too old");
+            }
+            if (user.BirthDay > DateTime.Now.AddYears(- 10))
+            {
+                validationList.Add("You are too young");
+            }
+            if (validationList.Count != 0)
+            {
+                return validationList;
+            }
+            else
+            {
+                return null;
+            }
         }
         [HttpPut("id")]
         public async Task<ActionResult<List<User>>> UpdateUser(int id, User request)

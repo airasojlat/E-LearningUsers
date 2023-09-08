@@ -14,7 +14,7 @@ namespace superheroapi.Services.UserServices
                     EmailAddress = "sariataljo0@gmail.com",
                     Password = "123456789",
                     Country = "Türkiye",
-                    BirthDay = new DateTime(2005,05,23),
+                    BirthDay = new DateTime(23-05-2005),
                     PhoneNumber = "05510088380",
                     UserName = "airas"
                 },
@@ -37,11 +37,11 @@ namespace superheroapi.Services.UserServices
         {
             _context = context;
         }
-        public async Task<List<User>> AddUser(User user)
+        public async Task<List<User>> Signup(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            return Users;
+            return await _context.Users.ToListAsync();
         }
 
         public async Task<List<User>?> DeleteUser(int id)
@@ -53,7 +53,7 @@ namespace superheroapi.Services.UserServices
             }
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
-            return Users;
+            return await _context.Users.ToListAsync();
         }
 
         public async  Task<List<User>> GetAllUsers()
@@ -62,7 +62,7 @@ namespace superheroapi.Services.UserServices
             return users;
         }
 
-        public async Task<User?> login([FromBody] LoginModel loginInfo)
+        public async Task<User?> Login([FromBody] LoginModel loginInfo)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.EmailAddress == loginInfo.EmailAddress && x.Password == loginInfo.Password);
             if (user is null)
@@ -86,7 +86,7 @@ namespace superheroapi.Services.UserServices
             user.UserName = request.UserName;
 
             await _context.SaveChangesAsync();
-            return Users;
+            return await _context.Users.ToListAsync();
             
         }
     }
