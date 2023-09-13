@@ -27,11 +27,11 @@ namespace superheroapi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login([FromBody] LoginModel loginInfo)
         {
-            if (loginInfo.EmailAddress is null)
+            if (string.IsNullOrEmpty(loginInfo.EmailAddress))
             {
                 return BadRequest("EmailAddress is empty");
             }
-            if (loginInfo.Password is null)
+            if (string.IsNullOrEmpty(loginInfo.Password))
             {
                 return BadRequest("Password is empty");
             }

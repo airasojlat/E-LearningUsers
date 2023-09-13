@@ -15,6 +15,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddCors(o => o.AddPolicy(name: "DefaulPolicy",
+                      builder =>
+                      {
+                          builder.WithOrigins("http://localhost:4200").AllowAnyMethod()
+                                            .AllowAnyHeader();
+                      }));
 
 
 
@@ -35,6 +41,8 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("DefaulPolicy");
 
 app.MapControllers();
 

@@ -11,6 +11,7 @@
         public DateTime BirthDay { get; set; }
         public string Country { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
+        public string JobType { get; set; } = string.Empty;
     }
     public class LoginModel
     {
