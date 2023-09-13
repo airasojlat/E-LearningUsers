@@ -2,6 +2,7 @@ global using Microsoft.EntityFrameworkCore;
 global using superheroapi.Data;
 global using superheroapi.Models;
 using superheroapi.Services.CoursesServices;
+using superheroapi.Services.InstructorsServices;
 using superheroapi.Services.UserServices;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IinstructorService, InstructorService>();
 builder.Services.AddDbContext<DataContext>();
 builder.Services.AddCors(o => o.AddPolicy(name: "DefaulPolicy",
                       builder =>
